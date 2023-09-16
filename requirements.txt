@@ -1,0 +1,5 @@
+Cantera==2.6.0.post1
+numpy==1.25.0
+scipy==1.10.1
+streamlit==1.23.1
+pandas==2.0.2
