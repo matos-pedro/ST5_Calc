@@ -226,13 +226,7 @@ class ST5_Calc:
 
         if self.pe:
             col2.subheader('Condições de Equilíbrio')
-            col2.code(f'''A partir da condição refletida e da pressão P5 de\n{self.pe/1e6} MPa medida, a condição de quilíbrio calculada\nfoi:\npressão = {self.df['CondiçãoEqI'][0]} MPa\ntemperatura = {self.df['CondiçãoEqI'][1]} K\ndensidade = {self.df['CondiçãoEqI'][2]} kg/m3\nentropia = {self.df['CondiçãoEqI'][4]} kJ/K\nentalpia = {self.df['CondiçãoEqI'][5]} MJ/K/kg\nvel. do som = {self.df['CondiçãoEqI'][7]} m/s\ncp/cv = {self.df['Condição5'][8]}''')
-
-            
-        col2.markdown('<small>Learn how to [build chat-based apps](https://docs.streamlit.io/knowledge-base/tutorials/build-conversational-apps)</small>', unsafe_allow_html=True)
-        
-        
-        
+            col2.code(f'''A partir da condição refletida e da pressão P5 de\n{self.pe/1e6} MPa medida, a condição de quilíbrio calculada\nfoi:\npressão = {self.df['CondiçãoEqI'][0]} MPa\ntemperatura = {self.df['CondiçãoEqI'][1]} K\ndensidade = {self.df['CondiçãoEqI'][2]} kg/m3\nentropia = {self.df['CondiçãoEqI'][4]} kJ/K\nentalpia = {self.df['CondiçãoEqI'][5]} MJ/K/kg\nvel. do som = {self.df['CondiçãoEqI'][7]} m/s\ncp/cv = {self.df['Condição5'][8]}''')        
         
         return None
 
