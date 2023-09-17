@@ -204,6 +204,9 @@ class ST5_Calc:
         
         col1.subheader('Driven')
         col1.code(f'''Ar atmosférico à pressão e temperatura iniciais\nde {self.p1/1e3} kPa e {self.T1} K. As informações complementares\nsão:\ndensidade = {self.df['Driven'][2]} kg/m3\nentropia = {self.df['Driven'][4]} kJ/K\nentalpia = {1e3*self.df['Driven'][5]} kJ/K/kg\nvel. do som = {self.df['Driven'][7]} m/s\ncp/cv = {self.df['Driven'][8]}''')
+
+        col1.subheader('Onda de Choque Inicidente')
+        col1.code(f'''As informações fornecida levaram a uma onda\nde choque primária de Ms de {round(self.Ms,3)}, correspondendo\numa velocidade aproximada de {int(self.us)} m/s.''')
         
         
         # Display media
@@ -241,7 +244,7 @@ with st.sidebar:
     st.write("### Driver - Inicial")     
     p4_i  =  st.number_input(label="Pressão Inicial, MPa:"   , value=2.5 , min_value=1., step=0.1)
     T4_i  =  st.number_input(label="Temperatura Inicial, K:" , value=300., min_value=0., step=1.)
-    XHe   =  st.number_input(label="Concentração de Hélio, %", value=0.65, min_value=0.,max_value=1.0, step=0.01)                        
+    XHe   =  st.number_input(label="Concentração de Hélio, %", value=65.0, min_value=0.,max_value=100.0, step=1.)                        
 
     st.write("##### Driver - Final, Preencher com 0 se não usar")      
     p4_f  =  st.number_input(label="Pressão Final do Driver, MPa:"  , value=0.0, min_value=0., step=0.1)
@@ -262,7 +265,7 @@ with st.sidebar:
 
 
 ST5 = ST5_Calc( )
-ST5.Driver(p4_i=p4_i*1e6, p4_f=p4_f*1e6, T4_i=300.0, XHe=XHe)
+ST5.Driver(p4_i=p4_i*1e6, p4_f=p4_f*1e6, T4_i=300.0, XHe=XHe/100.)
 ST5.Driven(p1=p1*1e3, T1=T1)
 ST5.Calc_Ms(Eficiencia=eta)
 ST5.Shock12(Us=Us)
