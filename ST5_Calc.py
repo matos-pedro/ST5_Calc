@@ -239,30 +239,30 @@ class ST5_Calc:
 
 
 with st.sidebar:
-    st.write("## Entradas")
+    st.header("Entradas")
   
-    st.write("### Driver - Inicial")     
+    st.subheader("Driver ")     
     p4_i  =  st.number_input(label="Pressão Inicial, MPa:"   , value=2.5 , min_value=1., step=0.1)
     T4_i  =  st.number_input(label="Temperatura Inicial, K:" , value=300., min_value=0., step=1.)
     XHe   =  st.number_input(label="Concentração de Hélio, %", value=65.0, min_value=0.,max_value=100.0, step=1.)                        
 
-    st.write("##### Driver - Final, Preencher com 0 se não usar")      
-    p4_f  =  st.number_input(label="Pressão Final do Driver, MPa:"  , value=0.0, min_value=0., step=0.1)
-
-    st.write("### Driven - Inicial")     
+    st.divider()
+    st.subheader("Driven ") 
     p1  =  st.number_input(label="Pressão Inicial, kPa:"   , value=3.0 , min_value=1., step=0.1)
     T1  =  st.number_input(label="Temperatura Inicial, K:" , value=300., min_value=0.)
 
-    st.write("### Eficiência P4/P1 x Ms")     
-    eta =  st.number_input(label="Fator de Correção:" , value=1.00, min_value=0.0, step=0.1)   
+    st.divider()
+    st.subheader("Fator de Ganho P4/P1 x Ms *")     
+    eta =  st.number_input(label="Fator (0 a 1):" , value=1.00, min_value=0.0, step=0.1)   
     
-    st.write("### Us Experimental, Preencher com 0 se não usar")     
-    Us =  st.number_input(label="Vel. Onda de Choque Indicente, m/s:" , value=0.00, min_value=0.0, step=10.0)   
+    
+    st.divider()
+    st.subheader("Informações Pós-Disparo (preencher com 0 se não as tiver)")     
+    p4_f  =  st.number_input(label="Pressão Final p4, MPa:"  , value=0.0, min_value=0., step=0.1)
+    Us =  st.number_input(label="Vel. Onda de Choque Incidente, m/s:" , value=0.00, min_value=0.0, step=10.0)   
+    pe =  st.number_input(label="Pressão p5, MPa:", value=0.00, min_value=0.0, step=1.0)   
 
-    st.write("### P5 Experimental, Preencher com 0 se não usar")     
-    pe =  st.number_input(label="Pressão Total, MPa:", value=0.00, min_value=0.0, step=1.0)   
-
-
+    st.write('* o fator tem origem no fator de ganho apresentado para corrigir razões de áreas entre seções do driver e do driven; aqui se usa como fator de ajuste. ')
 
 ST5 = ST5_Calc( )
 ST5.Driver(p4_i=p4_i*1e6, p4_f=p4_f*1e6, T4_i=300.0, XHe=XHe/100.)
