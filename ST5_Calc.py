@@ -3,6 +3,7 @@ import streamlit as st
 import numpy as np
 import cantera as ct
 from scipy.optimize import minimize_scalar
+from scipy import optimize
 import pandas as pd
 
 st.set_page_config(
@@ -75,11 +76,19 @@ class ST5_Calc:
     def Calc_Ms(self,**kargs):  
         self.ef = kargs['Eficiencia']
         def res(Ms):
-            p21     = ( 2.*self.g1*Ms*Ms - (self.g1-1) )/(self.g1+1) 
-            sqr     = ( 2*self.g1*(  2*self.g1+(self.g1+1)*(p21-1)  ) )**0.5 
-            return ((self.p4/self.p1) - p21*(1. - (self.g4-1)*(1.0/self.ef)*(self.a1/self.a4)*(p21 -1)/sqr  )**(-2.*self.g4/(self.g4-1.)))**2
+            p21  = ( 1+ (2*self.g1/(self.g1+1))*(Ms*Ms-1) )
+            u2a1 = (1/(self.g1+1))*(Ms - 1./Ms)
+            return ( (self.ef*self.p4/self.p1) - p21*( 1. - ( self.ef**((1-self.g4)/(2*self.g4)) )*(self.a1/self.a4)*(self.g4-1)*u2a1)**(-2*self.g4/(self.g4-1))  )**2.0
 
-        self.Ms = minimize_scalar(res, bounds=(1.1, 15)).x
+       
+        _ = np.arange(1.1, 40, 0.1)
+        Res = 1e10
+        for i, v in enumerate(_):
+            if res(v) < Res:
+                self.Ms = _[i]
+                Res = res(v)
+        
+
 
     def Shock12(self,**kargs):
         self.driven.TP = self.T1, self.p1
@@ -253,7 +262,7 @@ with st.sidebar:
 
     st.divider()
     st.subheader("Fator de Ganho P4/P1 x Ms *")     
-    eta =  st.number_input(label="Fator (0 a 1):" , value=1.00, min_value=0.0, step=0.1)   
+    eta =  st.number_input(label="Fator (0 a 1):" , value=1.00, min_value=0.1, step=0.05)   
     
     
     st.divider()
