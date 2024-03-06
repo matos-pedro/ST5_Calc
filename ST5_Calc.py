@@ -203,7 +203,7 @@ class ST5_Calc:
         #######################################
         a = 5
         col1.subheader('Driver')
-        col1.code(f'''Pressão P4 informada de {self.p4_i/1e6} Mpa a frio,\ntemperatura inicial de {self.T4_i} K e\nconcentração molar de Hélio de {self.XHe * 1e2} %.\nA composição complementar foi uma proporção\nestquiométrica de H2 e ar.''')
+        col1.code(f'''Pressão P4 informada de {self.p4_i/1e6} MPa a frio,\ntemperatura inicial de {self.T4_i} K e\nconcentração molar de Hélio de {self.XHe * 1e2} %.\nA composição complementar foi uma proporção\nestquiométrica de H2 e ar.''')
             
         if self.p4_f:
             col1.code(f'''A pressão P4 quente informada foi de {self.p4_f/1e6} Mpa''')
@@ -251,7 +251,7 @@ with st.sidebar:
     st.header("Entradas")
   
     st.subheader("Driver ")     
-    p4_i  =  st.number_input(label="Pressão Inicial, MPa:"   , value=2.5 , min_value=1., step=0.1)
+    p4_i  =  st.number_input(label="Pressão Inicial, MPa:"   , value=2.5 , min_value=0.01, step=0.1)
     T4_i  =  st.number_input(label="Temperatura Inicial, K:" , value=300., min_value=0., step=1.)
     XHe   =  st.number_input(label="Concentração de Hélio, %", value=65.0, min_value=0.,max_value=100.0, step=1.)                        
 
