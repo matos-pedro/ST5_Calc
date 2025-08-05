@@ -253,7 +253,7 @@ class ST5_Calc:
         • γ = `{self.df['Driver'][8]}`
         """)
 
-        col1.markdown(f"""{self.T_liq:.1f}""")
+        col1.markdown(f"""Entalpia""")
 
         ######### Driven #########
         col1.subheader('Driven')
