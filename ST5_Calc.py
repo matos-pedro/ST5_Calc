@@ -220,6 +220,7 @@ class ST5_Calc:
 
 
 
+
     def cs_body(self):
         
         col1, col2 = st.columns(2)
@@ -253,7 +254,7 @@ class ST5_Calc:
         • γ = `{self.df['Driver'][8]}`
         """)
 
-        col1.markdown(f"""Entalpia""")
+        col1.markdown(f"""{self.T_liq:.1f}""")
 
         ######### Driven #########
         col1.subheader('Driven')
@@ -338,8 +339,6 @@ class ST5_Calc:
 
 
 
- 
-
 
 with st.sidebar:
     st.header("Entradas")
@@ -369,6 +368,7 @@ with st.sidebar:
 
 ST5 = ST5_Calc( )
 ST5.Driver(p4_i=p4_i*1e6, p4_f=p4_f*1e6, T4_i=300.0, XHe=XHe/100.)
+ST5.Liquido()
 ST5.Driven(p1=p1*1e3, T1=T1)
 ST5.Calc_Ms(Eficiencia=eta)
 ST5.Shock12(Us=Us)
