@@ -50,6 +50,7 @@ class ST5_Calc:
         self.s4 = self.driver.entropy_mass
         self.h4 = self.driver.enthalpy_mass
         self.H2O = self.driver['H2O'].X
+        self.Liquido()
 
     def acha_T(self, T):
         self.driver.TPX = self.T4_i, self.p4_i, 'H2:'+str(self.xH2)+',O2:'+str(self.xO2)+',He:'+str(self.XHe)
@@ -372,7 +373,6 @@ with st.sidebar:
 
 ST5 = ST5_Calc( )
 ST5.Driver(p4_i=p4_i*1e6, p4_f=p4_f*1e6, T4_i=300.0, XHe=XHe/100.)
-ST5.Liquido()
 ST5.Driven(p1=p1*1e3, T1=T1)
 ST5.Calc_Ms(Eficiencia=eta)
 ST5.Shock12(Us=Us)
