@@ -49,7 +49,7 @@ class ST5_Calc:
         self.r4 = self.driver.density
         self.s4 = self.driver.entropy_mass
         self.h4 = self.driver.enthalpy_mass
-        self.H2O = self.driver.X['H2O']
+        #self.H2O = self.driver.X['H2O']
 
     def acha_T(self, T):
         self.driver.TPX = self.T4_i, self.p4_i, 'H2:'+str(self.xH2)+',O2:'+str(self.xO2)+',He:'+str(self.XHe)
