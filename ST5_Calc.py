@@ -373,11 +373,11 @@ with st.sidebar:
 
 ST5 = ST5_Calc( )
 ST5.Driver(p4_i=p4_i*1e6, p4_f=p4_f*1e6, T4_i=300.0, XHe=XHe/100.)
-ST5.estado_liquido()
 ST5.Driven(p1=p1*1e3, T1=T1)
 ST5.Calc_Ms(Eficiencia=eta)
 ST5.Shock12(Us=Us)
 ST5.Shock25(pe=pe*1e6)
 ST5.Tabela()
+ST5.estado_liquido()
 ST5.cs_body()
 
