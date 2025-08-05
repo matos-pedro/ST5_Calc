@@ -212,10 +212,67 @@ class ST5_Calc:
         # Cálculo da temperatura final após condensação e resfriamento da água para 300K
         numerador = delta_H_vap + c_p_liq * (T_i - 300)
         delta_T = (n_H2O / n_total) * numerador / c_v
-        self.T_liq = T_i - delta_T
+        self.T_liq = (T_i - delta_T)[0]
 
         # Estimativa da pressão final, assumindo volume constante e gás ideal
-        self.P_liq = p_i * (1 - X_H2O)
+        self.P_liq = (p_i * (1 - X_H2O))[0]
+        print()
+        print()
+        print()
+        print()
+        print(f"Pressão estimada do líquido: {self.P_liq/1e6:.2f}  MPa")
+        print(f"Pressão estimada do líquido: {p_i/1e6:.2f}  MPa")
+        print()
+
+    def Liquido2(self):
+        # Estado inicial
+        T_i = self.T4      # Temperatura atual [K]
+        p_i = self.p4      # Pressão atual [Pa]
+        
+        # Composição atual (frações molares)
+        X_old = self.driver.X.copy()
+        
+        # Índice da água (H2O)
+        idx_H2O = self.driver.species_index('H2O')
+        
+        # Fração molar de água
+        X_H2O = X_old[idx_H2O]
+        
+        # Volume inicial do gás (considerando 1 mol)
+        # Volume = n * R * T / P
+        # Como Cantera pode dar densidade, podemos calcular volume molar:
+        V_initial = (1.0 / self.driver.density)  # m³/mol, assumindo 1 mol total
+        
+        # Nova pressão após condensação da água
+        p_new = p_i * (1 - X_H2O)
+        
+        # Nova composição: zera H2O e renormaliza as outras frações
+        X_new = X_old.copy()
+        X_new[idx_H2O] = 0.0
+        X_new /= X_new.sum()
+        
+        # Atualiza o estado do gás com nova pressão e composição, temperatura inicial chutada
+        self.driver.TPX = T_i, p_new, X_new
+        
+        # Função objetivo para achar temperatura que mantém volume constante
+        def f_obj(T):
+            self.driver.TPX = T, p_new, X_new
+            self.driver.equilibrate('TP')
+            V = 1.0 / self.driver.density  # volume molar [m³/mol]
+            return (V - V_initial)**2
+        
+        # Minimiza para achar temperatura que mantém volume constante
+        res = minimize_scalar(f_obj, bounds=(300, 5000), method='bounded')
+        T_new = res.x
+        
+        # Define o estado final com essa temperatura, pressão e composição
+        self.driver.TPX = T_new, p_new, X_new
+        self.driver.equilibrate('TP')
+        
+        # Salva resultados
+        self.T_liq2 = T_new
+        self.P_liq2 = p_new
+        self.X_liq2 = X_new
 
 
 
@@ -252,9 +309,17 @@ class ST5_Calc:
         • Entalpia: `{1e3*self.df['Driver'][5]:.2f} kJ/kg`  
         • Velocidade do som: `{self.df['Driver'][7]} m/s`  
         • γ = `{self.df['Driver'][8]}`
-        """)
 
-        #col1.markdown(f"""{self.T_liq:.1f}""")
+        **Após condensar toda a água (Driver)**  
+        • Pressão: `{self.P_liq / 1e6:.2f} MPa`  
+        • Temperatura: `{self.T_liq:.1f} K`
+
+        **Após condensar toda a água (Driver)**  
+        • Pressão: `{self.P_liq2 / 1e6:.2f} MPa`  
+        • Temperatura: `{self.T_liq2:.1f} K`
+
+        """
+        )
 
         ######### Driven #########
         col1.subheader('Driven')
@@ -369,6 +434,7 @@ with st.sidebar:
 ST5 = ST5_Calc( )
 ST5.Driver(p4_i=p4_i*1e6, p4_f=p4_f*1e6, T4_i=300.0, XHe=XHe/100.)
 ST5.Liquido()
+ST5.Liquido2()
 ST5.Driven(p1=p1*1e3, T1=T1)
 ST5.Calc_Ms(Eficiencia=eta)
 ST5.Shock12(Us=Us)
