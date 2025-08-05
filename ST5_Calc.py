@@ -252,6 +252,12 @@ class ST5_Calc:
         • γ = `{self.df['Driver'][8]}`
         """)
 
+        col1.markdown(f"""
+        **Estimativa após condensação da água (volume constante):**  
+        • Temperatura líquida estimada: `{self.T_liq:.1f} K`  
+        • Pressão estimada após condensação: `{self.P_liq/1e6:.3f} MPa` (considerando redução da fração molar da água gasosa)  
+        """)
+
         ######### Driven #########
         col1.subheader('Driven')
 
