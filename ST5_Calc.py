@@ -194,6 +194,30 @@ class ST5_Calc:
         except:
             pass
 
+    def Liquido(self):
+        # Estado inicial
+        T_i = self.T4      # Temperatura atual [K]
+        p_i = self.p4      # Pressão atual [Pa]
+        X_H2O = self.H2O   # Fração molar da água gasosa
+        n_total = 1.0      # Normalização (frações molares)
+
+        # Propriedades físicas aproximadas
+        c_v = 20.0          # Calor molar a volume constante [J/mol.K]
+        delta_H_vap = 4.0e4  # Entalpia de vaporização da água [J/mol]
+        c_p_liq = 75.3      # Calor específico da água líquida [J/mol.K]
+
+        n_H2O = X_H2O * n_total
+
+        # Cálculo da temperatura final após condensação e resfriamento da água para 300K
+        numerador = delta_H_vap + c_p_liq * (T_i - 300)
+        delta_T = (n_H2O / n_total) * numerador / c_v
+        self.T_liq = T_i - delta_T
+
+        # Estimativa da pressão final, assumindo volume constante e gás ideal
+        self.P_liq = p_i * (1 - X_H2O)
+
+
+
 
     def cs_body(self):
         
@@ -342,6 +366,7 @@ with st.sidebar:
 
 ST5 = ST5_Calc( )
 ST5.Driver(p4_i=p4_i*1e6, p4_f=p4_f*1e6, T4_i=300.0, XHe=XHe/100.)
+ST5.Liquido()
 ST5.Driven(p1=p1*1e3, T1=T1)
 ST5.Calc_Ms(Eficiencia=eta)
 ST5.Shock12(Us=Us)
