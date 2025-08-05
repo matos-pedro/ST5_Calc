@@ -201,38 +201,78 @@ class ST5_Calc:
         #######################################
         # COLUMN 1
         #######################################
-        a = 5
+
+        ######### Driver #########
         col1.subheader('Driver')
-        col1.code(f'''Pressão P4 informada de {self.p4_i/1e6} MPa a frio,\ntemperatura inicial de {self.T4_i} K e\nconcentração molar de Hélio de {self.XHe * 1e2} %.\nA composição complementar foi uma proporção\nestquiométrica de H2 e ar.''')
-            
+
+        col1.markdown(f"""
+        **Condições iniciais (Driver)**  
+        • Pressão inicial: `{self.p4_i/1e6:.2f} MPa`  
+        • Temperatura inicial: `{self.T4_i:.1f} K`  
+        • Concentração de hélio: `{self.XHe * 100:.1f} %`  
+        • Mistura estequiométrica com H₂ e O₂.
+        """)
+
         if self.p4_f:
-            col1.code(f'''A pressão P4 quente informada foi de {self.p4_f/1e6} Mpa''')
+            col1.markdown(f"**Pressão final quente informada**: `{self.p4_f/1e6:.2f} MPa`")
 
-        col1.code(f'''Definida as informações de entrada, os cálculos levaram o gás de Driver à seguinte configuração:\npressão = {self.df['Driver'][0]} MPa\ntemperatura = {self.df['Driver'][1]} K\ndensidade = {self.df['Driver'][2]} kg/m3\nentropia = {self.df['Driver'][4]} kJ/K\nentalpia = {1e3*self.df['Driver'][5]} kJ/K/kg\nvel. do som = {self.df['Driver'][7]} m/s\ncp/cv = {self.df['Driver'][8]}''')
+        col1.markdown(f"""
+        **Condições após equilíbrio (Driver)**  
+        • Pressão: `{self.df['Driver'][0]} MPa`  
+        • Temperatura: `{self.df['Driver'][1]} K`  
+        • Densidade: `{self.df['Driver'][2]} kg/m³`  
+        • Entropia: `{self.df['Driver'][4]} kJ/K`  
+        • Entalpia: `{1e3*self.df['Driver'][5]:.2f} kJ/kg`  
+        • Velocidade do som: `{self.df['Driver'][7]} m/s`  
+        • γ = `{self.df['Driver'][8]}`
+        """)
 
-        
+        ######### Driven #########
         col1.subheader('Driven')
-        col1.code(f'''Ar atmosférico à pressão e temperatura iniciais\nde {self.p1/1e3} kPa e {self.T1} K. As informações complementares\nsão:\ndensidade = {self.df['Driven'][2]} kg/m3\nentropia = {self.df['Driven'][4]} kJ/K\nentalpia = {1e3*self.df['Driven'][5]} kJ/K/kg\nvel. do som = {self.df['Driven'][7]} m/s\ncp/cv = {self.df['Driven'][8]}''')
 
-        col1.subheader('Onda de Choque Inicidente')
-        col1.code(f'''As informações fornecida levaram a uma onda\nde choque primária de Ms de {round(self.Ms,3)}, correspondendo\numa velocidade aproximada de {int(self.us)} m/s.''')
-        
-        
-        # Display media
-        
+        col1.markdown(f"""
+        **Condições iniciais (Driven)**  
+        • Pressão: `{self.p1:.1f} kPa`  
+        • Temperatura: `{self.T1} K`  
+
+        **Propriedades do ar atmosférico**  
+        • Densidade: `{self.df['Driven'][2]} kg/m³`  
+        • Entropia: `{self.df['Driven'][4]} kJ/K`  
+        • Entalpia: `{1e3*self.df['Driven'][5]:.2f} kJ/kg`  
+        • Velocidade do som: `{self.df['Driven'][7]} m/s`  
+        • γ = `{self.df['Driven'][8]}`
+        """)
+
+        ######### Onda de Choque Incidente #########
+        col1.subheader('Onda de Choque Incidente')
+
+        col1.markdown(f"""
+        **Mach incidente estimado**: `{round(self.Ms,3)}`  
+        **Velocidade da onda de choque**: `{int(self.us)} m/s`
+        """)
+
+        ######### Condições Chocadas #########
         col1.subheader('Condições Chocadas')
-        if self.flag_us :
-            col1.code(f'''A partir de Us medido de {int(self.us)} m/s e das condições\niniciais do Driven, as seguintes condições chocadas\nforam calculadas:\npressão = {1e3*self.df['Condição2'][0]} kPa\ntemperatura = {self.df['Condição2'][1]} K\ndensidade = {self.df['Condição2'][2]} kg/m3\nentropia = {self.df['Condição2'][4]} kJ/K\nentalpia = {self.df['Condição2'][5]} MJ/K/kg\nvel. do som = {self.df['Condição2'][7]} m/s\ncp/cv = {self.df['Condição2'][8]}
-            ''')
-        else:
-            col1.code(f'''A partir de Us calculado de {int(self.us)} m/s através da\nrelação P4/P1 e das condições iniciais do Driven, as\nseguintes condições chocadas foram calculadas:\npressão = {1e3*self.df['Condição2'][0]} kPa\ntemperatura = {self.df['Condição2'][1]} K\ndensidade = {self.df['Condição2'][2]} kg/m3\nentropia = {self.df['Condição2'][4]} kJ/K\nentalpia = {self.df['Condição2'][5]} MJ/K/kg\nvel. do som = {self.df['Condição2'][7]} m/s\ncp/cv = {self.df['Condição2'][8]} ''')
-    
+
+        origem_us = "calculado" if not self.flag_us else "medido"
+        col1.markdown(f"""
+        **Com base em Us {origem_us}, as condições pós-choque são:**  
+        • Pressão: `{1e3*self.df['Condição2'][0]:.1f} kPa`  
+        • Temperatura: `{self.df['Condição2'][1]} K`  
+        • Densidade: `{self.df['Condição2'][2]} kg/m³`  
+        • Mach: `{round(self.df['Condição2'][3], 2)}`  
+        • Entropia: `{self.df['Condição2'][4]} kJ/K`  
+        • Entalpia: `{self.df['Condição2'][5]} MJ/kg`  
+        • Velocidade do som: `{self.df['Condição2'][7]} m/s`  
+        • γ = `{self.df['Condição2'][8]}`
+        """)
+
         #######################################
         # COLUMN 2
         #######################################
         
         # Display interactive widgets
-        
+        ######### Condições Refletidas #########
         col2.subheader('Condições Refletidas')
         col2.code(f'''A condição refletida foi calculada a partir dos\nparâmetros informados até aqui, levando aos seguintes\nnúmeros:\npressão = {self.df['Condição5'][0]} MPa\ntemperatura = {self.df['Condição5'][1]} K\ndensidade = {self.df['Condição5'][2]} kg/m3\nentropia = {self.df['Condição5'][4]} kJ/K\nentalpia = {self.df['Condição5'][5]} MJ/K/kg\nvel. do som = {self.df['Condição5'][7]} m/s\ncp/cv = {self.df['Condição5'][8]}\nAqui não se usou P5 medido.''')
 
