@@ -333,9 +333,9 @@ with st.sidebar:
     st.header("Entradas")
   
     st.subheader("Driver ")     
-    p4_i  =  st.number_input(label="Pressão Inicial, MPa:"   , value=2.5 , min_value=0.01, step=0.1)
+    p4_i  =  st.number_input(label="Pressão Inicial, MPa:"   , value=4.5 , min_value=0.01, step=0.1)
     T4_i  =  st.number_input(label="Temperatura Inicial, K:" , value=300., min_value=0., step=1.)
-    XHe   =  st.number_input(label="Concentração de Hélio, %", value=65.0, min_value=0.,max_value=100.0, step=1.)                        
+    XHe   =  st.number_input(label="Concentração de Hélio, %", value=75.0, min_value=0.,max_value=100.0, step=1.)                        
 
     st.divider()
     st.subheader("Driven ") 
