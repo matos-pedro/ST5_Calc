@@ -194,8 +194,6 @@ class ST5_Calc:
         except:
             pass
 
-        
-
 
     def cs_body(self):
         
@@ -229,10 +227,7 @@ class ST5_Calc:
         • Velocidade do som: `{self.df['Driver'][7]} m/s`  
         • γ = `{self.df['Driver'][8]}`
         """)
-
-
-
-            
+        
 
         ######### Driven #########
         col1.subheader('Driven')
