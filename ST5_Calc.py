@@ -49,6 +49,7 @@ class ST5_Calc:
         self.r4 = self.driver.density
         self.s4 = self.driver.entropy_mass
         self.h4 = self.driver.enthalpy_mass
+        self.H2O = self.driver.X['H2O']
 
     def acha_T(self, T):
         self.driver.TPX = self.T4_i, self.p4_i, 'H2:'+str(self.xH2)+',O2:'+str(self.xO2)+',He:'+str(self.XHe)
@@ -193,6 +194,29 @@ class ST5_Calc:
         except:
             pass
 
+    def estado_liquido(self):
+        # Estado inicial
+        T_i = self.T4      # Temperatura atual [K]
+        p_i = self.p4      # Pressão atual [Pa]
+        X_H2O = self.H2O   # Fração molar da água gasosa
+        n_total = 1.0      # Normalização (frações molares)
+
+        # Propriedades físicas aproximadas
+        c_v = 20.0          # Calor molar a volume constante [J/mol.K]
+        delta_H_vap = 4.0e4  # Entalpia de vaporização da água [J/mol]
+        c_p_liq = 75.3      # Calor específico da água líquida [J/mol.K]
+
+        n_H2O = X_H2O * n_total
+
+        # Cálculo da temperatura final após condensação e resfriamento da água para 300K
+        numerador = delta_H_vap + c_p_liq * (T_i - 300)
+        delta_T = (n_H2O / n_total) * numerador / c_v
+        self.T_liq = T_i - delta_T
+
+        # Estimativa da pressão final, assumindo volume constante e gás ideal
+        self.P_liq = p_i * (1 - X_H2O)
+
+
 
     def cs_body(self):
         
@@ -226,6 +250,14 @@ class ST5_Calc:
         • Velocidade do som: `{self.df['Driver'][7]} m/s`  
         • γ = `{self.df['Driver'][8]}`
         """)
+
+        col1.markdown(f"""
+        **Estimativa após condensação da água (volume constante):**  
+        • Temperatura líquida estimada: `{self.T_liq:.1f} K`  
+        • Pressão estimada após condensação: `{self.P_liq/1e6:.3f} MPa` (considerando redução da fração molar da água gasosa)  
+        """)
+
+            
 
         ######### Driven #########
         col1.subheader('Driven')
@@ -341,6 +373,7 @@ with st.sidebar:
 
 ST5 = ST5_Calc( )
 ST5.Driver(p4_i=p4_i*1e6, p4_f=p4_f*1e6, T4_i=300.0, XHe=XHe/100.)
+ST5.estado_liquido()
 ST5.Driven(p1=p1*1e3, T1=T1)
 ST5.Calc_Ms(Eficiencia=eta)
 ST5.Shock12(Us=Us)
