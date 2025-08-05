@@ -270,16 +270,42 @@ class ST5_Calc:
         #######################################
         # COLUMN 2
         #######################################
-        
-        # Display interactive widgets
+
         ######### Condições Refletidas #########
         col2.subheader('Condições Refletidas')
-        col2.code(f'''A condição refletida foi calculada a partir dos\nparâmetros informados até aqui, levando aos seguintes\nnúmeros:\npressão = {self.df['Condição5'][0]} MPa\ntemperatura = {self.df['Condição5'][1]} K\ndensidade = {self.df['Condição5'][2]} kg/m3\nentropia = {self.df['Condição5'][4]} kJ/K\nentalpia = {self.df['Condição5'][5]} MJ/K/kg\nvel. do som = {self.df['Condição5'][7]} m/s\ncp/cv = {self.df['Condição5'][8]}\nAqui não se usou P5 medido.''')
 
+        col2.markdown(f"""
+        A condição refletida foi obtida a partir das condições pós-choque.  
+
+        **Propriedades (Região 5):**  
+        • Pressão: `{self.df['Condição5'][0]} MPa`  
+        • Temperatura: `{self.df['Condição5'][1]} K`  
+        • Densidade: `{self.df['Condição5'][2]} kg/m³`  
+        • Entropia: `{self.df['Condição5'][4]} kJ/K`  
+        • Entalpia: `{self.df['Condição5'][5]} MJ/kg`  
+        • Velocidade do som: `{self.df['Condição5'][7]} m/s`  
+        • γ = `{self.df['Condição5'][8]}`
+
+        Obs: **P5 medida** *não foi usada* nesta etapa.
+        """)
+
+        ######### Condições de Equilíbrio #########
         if self.pe:
             col2.subheader('Condições de Equilíbrio')
-            col2.code(f'''A partir da condição refletida e da pressão P5 de\n{self.pe/1e6} MPa medida, a condição de quilíbrio calculada\nfoi:\npressão = {self.df['CondiçãoEqI'][0]} MPa\ntemperatura = {self.df['CondiçãoEqI'][1]} K\ndensidade = {self.df['CondiçãoEqI'][2]} kg/m3\nentropia = {self.df['CondiçãoEqI'][4]} kJ/K\nentalpia = {self.df['CondiçãoEqI'][5]} MJ/K/kg\nvel. do som = {self.df['CondiçãoEqI'][7]} m/s\ncp/cv = {self.df['Condição5'][8]}''')        
-        
+
+            col2.markdown(f"""
+        Com base na pressão medida de P5 = `{self.pe/1e6:.2f} MPa`, foi possível determinar as condições de equilíbrio adiabático-isentrópico:  
+
+        **Propriedades (Equilíbrio):**  
+        • Pressão: `{self.df['CondiçãoEqI'][0]} MPa`  
+        • Temperatura: `{self.df['CondiçãoEqI'][1]} K`  
+        • Densidade: `{self.df['CondiçãoEqI'][2]} kg/m³`  
+        • Entropia: `{self.df['CondiçãoEqI'][4]} kJ/K`  
+        • Entalpia: `{self.df['CondiçãoEqI'][5]} MJ/kg`  
+        • Velocidade do som: `{self.df['CondiçãoEqI'][7]} m/s`  
+        • γ = `{self.df['Condição5'][8]}`  
+        """)
+
         return None
 
 
