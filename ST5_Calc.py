@@ -245,7 +245,7 @@ class ST5_Calc:
         **Após condensar toda a água (Driver)**  
         • Pressão: `{self.P_liq[0]/1e6:.2f} MPa`  
         • Temperatura: `{self.T_liq[0]:.2f} K`  
-        Obs: A pressão é dada pela pressão parcial dos gases não condensados; a temperatura é calcualda vida PV = nRT.
+        Obs: A pressão é dada pela pressão parcial dos gases não condensados; a temperatura é calculada via lei dos gases ideais.
         """
         )
 
