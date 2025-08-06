@@ -203,8 +203,10 @@ class ST5_Calc:
         n_total = 1.0      # Número total de mols antes da condensação (normalizado)
         R = ct.gas_constant  # Constante universal dos gases [J/mol.K]
 
-        p_out   = p_i*(1 - X_H2O)  # Nova pressão após condensação da água
+        p_out = p_i*(1 - X_H2O)  # Nova pressão após condensação da água
         self.P_liq = p_out
+        self.T_liq = self.T4_i * ( self.P_liq / self.p4_i ) * ( 1 - X_H2O )/self.XHe
+
 
 
 
@@ -241,7 +243,8 @@ class ST5_Calc:
         • γ = `{self.df['Driver'][8]}`
 
         **Após condensar toda a água (Driver)**  
-        • Pressão: `{self.P_liq[0] / 1e6:.2f} MPa`  
+        • Pressão: `{self.P_liq[0]/1e6:.2f} MPa`  
+        • Temperatura: `{self.T_liq[0]:.2f} K`  
         """
         )
 
@@ -354,6 +357,7 @@ with st.sidebar:
     pe =  st.number_input(label="Pressão p5, MPa:", value=0.00, min_value=0.0, step=1.0)   
 
     st.write('* o fator tem origem no fator de ganho apresentado para corrigir razões de áreas entre seções do driver e do driven; aqui se usa como fator de ajuste. ')
+
 
 ST5 = ST5_Calc( )
 ST5.Driver(p4_i=p4_i*1e6, p4_f=p4_f*1e6, T4_i=300.0, XHe=XHe/100.)
