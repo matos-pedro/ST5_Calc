@@ -343,7 +343,7 @@ with st.sidebar:
 
     st.divider()
     st.subheader("Driven ") 
-    p1  =  st.number_input(label="Pressão Inicial, kPa:"   , value=3.0 , min_value=1., step=0.1)
+    p1  =  st.number_input(label="Pressão Inicial, kPa:"   , value=3.0 , min_value=0.001, step=0.1)
     T1  =  st.number_input(label="Temperatura Inicial, K:" , value=300., min_value=0.)
 
     st.divider()
