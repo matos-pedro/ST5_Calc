@@ -254,7 +254,7 @@ class ST5_Calc:
 
         col1.markdown(f"""
         **Condições iniciais (Driven)**  
-        • Pressão: `{self.p1:.1f} kPa`  
+        • Pressão: `{self.p1:.1f} Pa`  
         • Temperatura: `{self.T1} K`  
 
         **Propriedades do ar atmosférico**  
