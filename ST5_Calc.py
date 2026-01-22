@@ -337,7 +337,7 @@ with st.sidebar:
     st.header("Entradas")
   
     st.subheader("Driver ")     
-    p4_i  =  st.number_input(label="Pressão Inicial, MPa:"   , value=4.5 , min_value=0.01, step=0.1)
+    p4_i  =  st.number_input(label="Pressão Inicial, kPa:"   , value=4500 , min_value=10, step=10)
     T4_i  =  st.number_input(label="Temperatura Inicial, K:" , value=300., min_value=0., step=1.)
     XHe   =  st.number_input(label="Concentração de Hélio, %", value=75.0, min_value=0.,max_value=100.0, step=1.)                        
 
@@ -361,7 +361,7 @@ with st.sidebar:
 
 
 ST5 = ST5_Calc( )
-ST5.Driver(p4_i=p4_i*1e6, p4_f=p4_f*1e6, T4_i=300.0, XHe=XHe/100.)
+ST5.Driver(p4_i=p4_i*1e3, p4_f=p4_f*1e6, T4_i=300.0, XHe=XHe/100.)
 ST5.Liquido()
 ST5.Driven(p1=p1*1e3, T1=T1)
 ST5.Calc_Ms(Eficiencia=eta)
