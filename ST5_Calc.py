@@ -13,26 +13,32 @@ st.set_page_config(
 
 class ST5_Calc:
     def __init__(self, **kargs):        
-        self.driver = ct.Solution('./Data/o2h2_he.yaml')
+        self.driver_N2 = ct.Solution('./Data/Burke_N2.yaml')
+        self.driver_HE = ct.Solution('./Data/Burke_HE.yaml')
         self.driven = ct.Solution('airNASA9.yaml')
         self.driven.X =  "N2:0.79,O2:0.21"
             
     def Driver(self, **kargs):  
         self.T4_i = kargs['T4_i']
         self.XHe  = kargs['XHe']
+        if self.XHe > 0.0:
+             self.driver = self.driver_HE
+        else:
+             self.driver = self.driver_N2
 
-        self.xH2 = (2/3)*(1-self.XHe)
-        self.xO2 = (1/2)*self.xH2
+        self.XN2 = kargs['XN2'] 
+        self.XH2 = kargs['XH2'] #(2/3)*(1-self.XHe)
+        self.XO2 = kargs['XO2'] #(1/2)*self.xH2
 
         self.p4_i = kargs['p4_i']
-        self.driver.TPX = self.T4_i, self.p4_i, 'H2:'+str(self.xH2)+',O2:'+str(self.xO2)+',He:'+str(self.XHe)
+        self.driver.TPX = self.T4_i, self.p4_i, 'H2:'+str(self.XH2)+',O2:'+str(self.XO2)+',He:'+str(self.XHe)+',N2:'+str(self.XN2)
         self.driver.equilibrate('UV',log_level=-99)  
 
         if kargs['p4_f']:
             self.p4_f = kargs['p4_f']
             self.T4_f = minimize_scalar(self.acha_T, bounds=(self.T4_i, 10000.0)).x
 
-            self.driver.TPX = self.T4_i, self.p4_f, 'H2:'+str(self.xH2)+',O2:'+str(self.xO2)+',He:'+str(self.XHe)
+            self.driver.TPX = self.T4_i, self.p4_f, 'H2:'+str(self.XH2)+',O2:'+str(self.XO2)+',He:'+str(self.XHe)+',N2:'+str(self.XN2)
             self.driver.equilibrate('UV')
     
             self.driver.TP = self.T4_f, self.p4_f
@@ -53,7 +59,7 @@ class ST5_Calc:
         self.Liquido()
 
     def acha_T(self, T):
-        self.driver.TPX = self.T4_i, self.p4_i, 'H2:'+str(self.xH2)+',O2:'+str(self.xO2)+',He:'+str(self.XHe)
+        self.driver.TPX = self.T4_i, self.p4_i, 'H2:'+str(self.XH2)+',O2:'+str(self.XO2)+',He:'+str(self.XHe)+',N2:'+str(self.XN2)
         self.driver.equilibrate('UV')
         densidade = self.driver.density
     
@@ -225,8 +231,10 @@ class ST5_Calc:
         **Condições iniciais (Driver)**  
         • Pressão inicial: `{self.p4_i/1e6:.2f} MPa`  
         • Temperatura inicial: `{self.T4_i:.1f} K`  
-        • Concentração de hélio: `{self.XHe * 100:.1f} %`  
-        • Mistura estequiométrica com H₂ e O₂.
+        • Concentração de He: `{self.XHe * 100:.1f} %`  
+        • Concentração de H2: `{self.XH2 * 100:.1f} %`  
+        • Concentração de O2: `{self.XO2 * 100:.1f} %`  
+        • Concentração de N2: `{self.XN2 * 100:.1f} %`  
         """)
 
         if self.p4_f:
@@ -328,6 +336,15 @@ class ST5_Calc:
         • γ = `{self.df['Condição5'][8]}`  
         """)
 
+
+
+        col2.subheader('Cinética Química')
+        col2.markdown(f"""
+        M.P. Burke, M. Chaos, Y. Ju, F.L. Dryer, S.J. Klippenstein
+        "Comprehensive H2/O2 Kinetic Model for High-Pressure Combustion,"
+        Int. J. Chem. Kinet. (2011).
+        """)
+
         return None
 
 
@@ -338,8 +355,12 @@ with st.sidebar:
   
     st.subheader("Driver ")     
     p4_i  =  st.number_input(label="Pressão Inicial, kPa:"   , value=4500 , min_value=10, step=10)
-    T4_i  =  st.number_input(label="Temperatura Inicial, K:" , value=300., min_value=0., step=1.)
-    XHe   =  st.number_input(label="Concentração de Hélio, %", value=75.0, min_value=0.,max_value=100.0, step=1.)                        
+    T4_i  =  st.number_input(label="Temperatura Inicial, K:" , value=300. , min_value=0., step=1.)
+    XHe   =  st.number_input(label="Concentração Vol. de Hélio, %", value=76.0 , min_value=0., max_value=100.0, step=1.)    
+    XH2   =  st.number_input(label="Concentração Vol. de H2, %"   , value=16.0 , min_value=0., max_value=100.0, step=1.)
+    XO2   =  st.number_input(label="Concentração Vol. de O2, %"   , value=8.0 , min_value=0., max_value=100.0, step=1.)
+    XN2   =  st.number_input(label="Concentração Vol. de N2, %"   , value=0.0  , min_value=0., max_value=100.0, step=1.)
+
 
     st.divider()
     st.subheader("Driven ") 
@@ -361,7 +382,7 @@ with st.sidebar:
 
 
 ST5 = ST5_Calc( )
-ST5.Driver(p4_i=p4_i*1e3, p4_f=p4_f*1e6, T4_i=300.0, XHe=XHe/100.)
+ST5.Driver(p4_i=p4_i*1e3, p4_f=p4_f*1e6, T4_i=300.0, XHe=XHe/100, XH2=XH2/100, XO2=XO2/100, XN2=XN2/100)
 ST5.Liquido()
 ST5.Driven(p1=p1*1e3, T1=T1)
 ST5.Calc_Ms(Eficiencia=eta)
